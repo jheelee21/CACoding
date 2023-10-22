@@ -2,16 +2,19 @@ package data_access;
 
 import entity.User;
 import entity.UserFactory;
+import use_case.clear_users.ClearUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class FileUserDataAccessObject implements SignupUserDataAccessInterface, LoginUserDataAccessInterface {
+public class FileUserDataAccessObject implements SignupUserDataAccessInterface, LoginUserDataAccessInterface, ClearUserDataAccessInterface {
 
     private final File csvFile;
 
@@ -94,6 +97,21 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface, 
     @Override
     public boolean existsByName(String identifier) {
         return accounts.containsKey(identifier);
+    }
+
+    @Override
+    public String getAllUsers() {
+        ArrayList<String> users = new ArrayList<>();
+        for (User user : accounts.values()) {
+            users.add(user.getName());
+        }
+        return String.join("\n", users);
+    }
+
+    @Override
+    public void clear() {
+        this.accounts.clear();
+        this.save();
     }
 
 }
